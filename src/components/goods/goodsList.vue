@@ -1,6 +1,6 @@
 <template>
   <div class="goods-list">
-    <div class="goods-item" v-for="item in goodsList" :key="item.id">
+    <div class="goods-item" v-for="item in goodsList" :key="item.id" @click="goDetail(item.id)">
       <img :src="item.img_url" alt />
       <h1 class="title">{{item.title}}</h1>
       <div class="info">
@@ -49,6 +49,9 @@ export default {
     getMore() {
       this.pageIndex++;
       this.getGoodsList();
+    },
+    goDetail(id) {
+      this.$router.push({ name: "goodsInfo", params: { id } });
     }
   }
 };

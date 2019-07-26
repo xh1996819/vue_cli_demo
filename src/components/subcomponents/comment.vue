@@ -116,4 +116,7 @@ export default {
 .commmentH4 {
   margin-top: 30px;
 }
+.mint-button--danger.is-plain {
+  margin: 10px 0;
+}
 </style>
