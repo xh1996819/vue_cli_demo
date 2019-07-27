@@ -2,6 +2,41 @@ import Vue from 'vue'
 import './plugins/axios'
 import App from './App.vue'
 import router from './router'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+var cart = JSON.parse(localStorage.getItem('cart') || '[]')
+
+const store = new Vuex.Store({
+  state: {
+    cart: cart
+  },
+  mutations: {
+    addCart(state, proO) {
+      let flag = false;
+      state.cart.some(item => {
+        if (item.id == proO.id) {
+          item.count += parseInt(proO.count)
+          flag = true
+          return true
+        }
+      })
+      if (!flag) state.cart.push(proO)
+
+      localStorage.setItem('cart', JSON.stringify(state.cart))
+    }
+  },
+  getters: {
+    getAllCount(state) {
+      let count = 0
+      state.cart.forEach(item => {
+        count += item.count
+      })
+      return count
+    }
+  }
+})
 
 // import { Header, Button, Swipe, SwipeItem, Lazyload } from 'mint-ui';
 
@@ -35,5 +70,6 @@ Vue.filter('dateFormat', function (dataStr, pattern = "YYYY-MM-DD HH:mm:ss") {
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

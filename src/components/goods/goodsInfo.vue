@@ -106,6 +106,14 @@ export default {
     },
     goToCart() {
       this.ballFlug = !this.ballFlug;
+
+      let proO = {
+        id: this.id,
+        count: this.selectedCount,
+        price: this.goodsInfo.sell_price,
+        selected: true
+      };
+      this.$store.commit("addCart", proO);
     },
     beforeEnter(el) {
       el.style.transform = "translate(0, 0)";
@@ -139,6 +147,7 @@ export default {
 <style lang="less" scoped>
 .goodsInfo-container {
   background-color: #eee;
+  padding-top: 10px;
 }
 .mui-card-content {
   text-indent: 0;
