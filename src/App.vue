@@ -2,7 +2,7 @@
   <div class="vue-container">
     <!-- 头部区域 -->
     <mt-header fixed title="Vue项目">
-      <mt-button icon="back" slot="left" @click="back"></mt-button>
+      <mt-button icon="back" slot="left" @click="back" v-show="flag"></mt-button>
     </mt-header>
     <!-- 中间内容区域 -->
     <div class="transition">
@@ -37,12 +37,25 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      flag: false
+    };
+  },
+  created() {
+    this.flag = this.$route.path === "/home" ? false : true;
   },
   methods: {
     back() {
-      console.log(this);
       this.$router.back();
+    }
+  },
+  watch: {
+    "$route.path": function(nV) {
+      if (nV === "/home") {
+        this.flag = false;
+      } else {
+        this.flag = true;
+      }
     }
   }
 };

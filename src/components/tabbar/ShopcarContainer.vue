@@ -1,9 +1,12 @@
 <template>
   <div class="cart">
-    <div class="mui-card" v-for="item in goodsList" :key="item.id">
+    <div class="mui-card" v-for="(item,i) in goodsList" :key="item.id">
       <div class="mui-card-content">
         <div class="mui-card-content-inner">
-          <mt-switch></mt-switch>
+          <mt-switch
+            v-model="$store.getters.getGoodsSelected[item.id]"
+            @change="selectChange(item.id,$store.getters.getGoodsSelected[item.id])"
+          ></mt-switch>
           <div class="goods-pic">
             <img :src="item.thumb_path" alt />
           </div>
@@ -13,8 +16,12 @@
             </div>
             <div class="goods-content">
               <span class="price">￥{{item.sell_price}}</span>
-              <cart-num-box class="num-box"></cart-num-box>
-              <a href="#">删除</a>
+              <cart-num-box
+                class="num-box"
+                :initCount="$store.getters.getGoodsCount[item.id]"
+                :goodsId="item.id"
+              ></cart-num-box>
+              <a href="#" @click.prevent="delGoods(item.id,i)">删除</a>
             </div>
           </div>
         </div>
@@ -22,7 +29,18 @@
     </div>
     <div class="mui-card">
       <div class="mui-card-content">
-        <div class="mui-card-content-inner">这是一个最简单的卡片视图控件；卡片视图常用来显示完整独立的一段信息，比如一篇文章的预览图、作者信息、点赞数量等</div>
+        <div class="mui-card-content-inner count-amount-box">
+          <div>
+            <p>总计(不含运费)</p>
+            <p>
+              已勾选商品
+              <span>{{$store.getters.getGoodsCountAndAmount.count}}</span>件,总价
+              <span>￥{{$store.getters.getGoodsCountAndAmount.amount}}</span>
+            </p>
+          </div>
+
+          <mt-button type="danger">去结算</mt-button>
+        </div>
       </div>
     </div>
   </div>
@@ -30,6 +48,7 @@
 
 <script>
 import cartNumBox from "../subcomponents/cartNumBox.vue";
+import mui from "../../assets/mui-master/dist/js/mui.js";
 export default {
   data() {
     return {
@@ -55,6 +74,24 @@ export default {
       }).then(res => {
         console.log(res);
         this.goodsList = res.data.message;
+      });
+    },
+    delGoods(id, i) {
+      mui.confirm("是否删除该商品?", e => {
+        if (e.index == 1) {
+          this.goodsList.splice(i, 1);
+          this.$store.commit("removeCart", id);
+          mui.toast("删除成功");
+        } else {
+          mui.toast("已取消");
+        }
+      });
+    },
+    selectChange(id, val) {
+      console.log(id, val);
+      this.$store.commit("updateGoodSelected", {
+        id,
+        selected: val
       });
     }
   },
@@ -111,5 +148,13 @@ export default {
 }
 .mui-card-content-inner {
   padding: 12px;
+}
+.count-amount-box {
+  align-items: center;
+  span {
+    color: #f40;
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 </style>

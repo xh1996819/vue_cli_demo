@@ -25,6 +25,32 @@ const store = new Vuex.Store({
       if (!flag) state.cart.push(proO)
 
       localStorage.setItem('cart', JSON.stringify(state.cart))
+    },
+    updateGoodsInfo(state, goods) {
+      state.cart.some(item => {
+        if (parseInt(item.id) === goods.id) {
+          item.count = parseInt(goods.count)
+          return true
+        }
+      })
+      localStorage.setItem('cart', JSON.stringify(state.cart))
+    },
+    removeCart(state, id) {
+      state.cart.some((item, i) => {
+        if (item.id == id) {
+          state.cart.splice(i, 1)
+          return true
+        }
+      })
+      localStorage.setItem('cart', JSON.stringify(state.cart))
+    },
+    updateGoodSelected(state, info) {
+      state.cart.some(item => {
+        if (item.id == info.id) {
+          item.selected = info.selected
+        }
+      })
+      localStorage.setItem('cart', JSON.stringify(state.cart))
     }
   },
   getters: {
@@ -34,6 +60,33 @@ const store = new Vuex.Store({
         count += item.count
       })
       return count
+    },
+    getGoodsCount(state) {
+      var o = {}
+      state.cart.forEach(item => {
+        o[item.id] = item.count
+      })
+      return o
+    },
+    getGoodsSelected(state) {
+      var o = {}
+      state.cart.forEach(item => {
+        o[item.id] = item.selected
+      })
+      return o
+    },
+    getGoodsCountAndAmount(state) {
+      var o = {
+        count: 0, //勾选数量
+        amount: 0 //总价格
+      }
+      state.cart.forEach(item => {
+        if (item.selected) {
+          o.count += item.count,
+            o.amount += item.price * item.count
+        }
+      })
+      return o
     }
   }
 })
